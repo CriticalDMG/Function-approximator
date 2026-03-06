@@ -13,5 +13,8 @@ int main()
     // Fraction a = p.at(Fraction(5));
     // std::cout << p << "\n";
     // std::cout << a; 
+    // std::string temp = "x^(1 + x)";
+    // FunctionParser p(temp, 'x');
+    // p.PrintToken();
     return 0;
 }

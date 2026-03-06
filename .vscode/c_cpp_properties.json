@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "E:\\compiler\\mingw32\\include",
+                "E:\\compiler\\mingw64\\include",
+                "E:\\Function Approximator/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cppStandard": "c++26",
+            "cStandard": "c23",
+            "compilerPath": "E:\\compiler\\ucrt64\\bin\\g++"
+        }
+    ],
+    "version": 4
+}
