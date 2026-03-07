@@ -3,7 +3,7 @@
 #include <math.h>
 #include "Fraction.hpp"
 
-Fraction::Fraction(int n, int d):numer(n), denom(d)
+Fraction::Fraction(type n, type d):numer(n), denom(d)
 {
     if(d == 0)
     {
@@ -36,28 +36,39 @@ void Fraction::reduce()
 
     numer /= gcd;
     denom /= gcd;
+
+    
+    type MaxLimit = 1000000000LL;
+
+    if(denom > MaxLimit)
+    {
+        type scale = denom / MaxLimit + 1;
+
+        numer = (numer + scale / 2) / scale; 
+        denom = (denom + scale / 2) / scale;
+
+        // Re-reduce just in case the scaled fraction can be simplified
+        type NewGcd = FindGCD(std::abs(numer), std::abs(denom));
+        numer /= NewGcd;
+        denom /= NewGcd;
+    }
 }
 
-int Fraction::FindGCD(int a, int b)
+type Fraction::FindGCD(type a, type b)
 {
     if (a == 0) return b;
 
-    while(a != b)
+    while(b != 0)
     {
-        if(a > b)
-        {
-            a = a - b;
-        }
-        else
-        {
-            b = b - a;
-        }
+        type temp = b;
+        b = a % b;
+        a = temp;
     }
 
    return a;
 }
 
-int Fraction::FindLCM(int a, int b)
+type Fraction::FindLCM(type a, type b)
 {
     if(a == 0) return 0;
     return abs((a / FindGCD(a, b)) * b);
@@ -70,20 +81,41 @@ Fraction& Fraction::operator+=(const Fraction& oth)
         *this = oth;
         return *this;
     } 
-    int lcm = FindLCM(denom, oth.denom);
+    type gcd = FindGCD(denom, oth.denom);
+    
+    // Instead of d1*d2, we use smaller factors to prevent overflow
+    type d1Factor = denom / gcd;
+    type d2Factor = oth.denom / gcd;
 
-    numer = numer * (lcm / denom) + oth.numer * (lcm / denom);
-    denom = lcm;
+    numer = (numer * d2Factor) + (oth.numer * d1Factor);
+    denom = denom * d2Factor;
 
+    reduce();
+    return *this;
+}
+
+Fraction& Fraction::operator+=(type val)
+{
+    if(denom == 1)
+    {
+        numer = numer + val;
+        return *this;
+    }
+
+    numer = numer + val*denom;
     reduce();
     return *this;
 }
 
 Fraction& Fraction::operator-=(const Fraction& oth)
 {
-    int lcm = FindLCM(denom, oth.denom);
-    numer = numer * (lcm / denom) - oth.numer * (lcm / denom);
-    denom = lcm;
+    type gcd = FindGCD(denom, oth.denom);
+    type d1Factor = denom / gcd;
+    type d2Factor = oth.denom / gcd;
+
+    // Scale each numerator by the OTHER denominator's factor
+    numer = (numer * d2Factor) - (oth.numer * d1Factor);
+    denom = denom * d2Factor;
 
     reduce();
     return *this;
@@ -91,8 +123,14 @@ Fraction& Fraction::operator-=(const Fraction& oth)
 
 Fraction& Fraction::operator*=(const Fraction& oth)
 {
-    numer *= oth.numer;
-    denom *= oth.denom;
+
+    // Cross-reduce to prevent overflow
+    // Simplify (this->numer / oth.denom) and (oth.numer / this->denom)
+    type gcd1 = FindGCD(std::abs(numer), std::abs(oth.denom));
+    type gcd2 = FindGCD(std::abs(oth.numer), std::abs(denom));
+
+    numer = (numer / gcd1) * (oth.numer / gcd2);
+    denom = (denom / gcd2) * (oth.denom / gcd1);
 
     reduce();
 
@@ -120,6 +158,11 @@ Fraction operator+(Fraction obj, const Fraction& oth)
     return obj += oth;
 }
 
+Fraction operator+(Fraction obj, type val)
+{
+    return obj += val;
+}
+
 Fraction operator-(Fraction obj, const Fraction& oth)
 {
     return obj -= oth;
@@ -130,7 +173,7 @@ Fraction operator*(Fraction obj, const Fraction& oth)
     return obj *= oth;
 }
 
-Fraction operator*(Fraction obj, int oth)
+Fraction operator*(Fraction obj, type oth)
 {   
     return obj *= oth;
 }

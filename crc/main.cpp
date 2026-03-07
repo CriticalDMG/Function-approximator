@@ -13,8 +13,31 @@ int main()
     // Fraction a = p.at(Fraction(5));
     // std::cout << p << "\n";
     // std::cout << a; 
-    // std::string temp = "x^(1 + x)";
-    // FunctionParser p(temp, 'x');
-    // p.PrintToken();
+    // try 
+    // {
+    //     std::string temp = "3 ^ x";
+    //     FunctionParser p(temp, 'x');
+    //     p.PrintToken();
+    //     p.ShuntingYard();
+    //     p.PrintAST();
+        
+    //     Fraction x(20, 3);
+    //     Fraction t = p.evaluate(x);
+    //     double res = t.ConvToDouble();
+    //     std::cout << "Result: " << res << "\n";
+    //     std::cout << "Result: " << t << "\n";
+    // }
+    // catch (const std::exception& e) 
+    // {
+    //     std::cerr << "\n[CRASH] Standard Exception: " << e.what() << "\n";
+    // }
+    // catch (const char* msg) 
+    // {
+    //     std::cerr << "\n[CRASH] String Exception: " << msg << "\n";
+    // }
+    // catch (...) 
+    // {
+    //     std::cerr << "\n[CRASH] Unknown error occurred!\n";
+    // }
     return 0;
 }
